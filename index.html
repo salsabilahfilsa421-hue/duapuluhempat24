@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Untuk Kamu</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;1,500&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,500&family=Caveat:wght@500;700&family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg-deep:#241623;
+    --bg-soft:#3a2536;
+    --bg-softer:#4a2f45;
+    --blush:#f0a6b8;
+    --blush-soft:#f7cdd6;
+    --gold:#d9b26a;
+    --cream:#f8ece4;
+    --mauve:#b98fa0;
+    --line: rgba(248,236,228,0.18);
+  }
+
+  *{ box-sizing:border-box; }
+
+  html{ scroll-behavior:smooth; }
+
+  body{
+    margin:0;
+    background: radial-gradient(ellipse at top, var(--bg-softer), var(--bg-deep) 70%);
+    color: var(--cream);
+    font-family:'Poppins', sans-serif;
+    font-weight:300;
+    overflow-x:hidden;
+    min-height:100vh;
+  }
+
+  /* ambient floating petals */
+  #petals{
+    position:fixed; inset:0; pointer-events:none; z-index:1; overflow:hidden;
+  }
+  .petal{
+    position:absolute; top:-5%;
+    font-size:14px;
+    color:var(--blush-soft);
+    opacity:0.55;
+    animation: fall linear infinite;
+  }
+  @keyframes fall{
+    0%{ transform:translateY(0) translateX(0) rotate(0deg); }
+    100%{ transform:translateY(110vh) translateX(var(--drift,20px)) rotate(360deg); }
+  }
+
+  section{
+    position:relative;
+    z-index:2;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    padding:6vh 6vw;
+    text-align:center;
+  }
+
+  h1,h2{
+    font-family:'Playfair Display', serif;
+    font-weight:600;
+    letter-spacing:0.01em;
+    margin:0 0 0.4em;
+  }
+
+  .eyebrow{
+    font-family:'Poppins', sans-serif;
+    text-transform:uppercase;
+    letter-spacing:0.35em;
+    font-size:0.68rem;
+    color:var(--mauve);
+    margin-bottom:1.2em;
+  }
+
+  /* ---------- HERO: ENVELOPE ---------- */
+  #hero{
+    gap:2.2rem;
+  }
+  #hero h1{ font-size:clamp(1.8rem, 4vw, 2.6rem); color:var(--blush-soft); }
+  #hero p{ color:var(--mauve); font-size:0.95rem; max-width:420px; line-height:1.7; }
+
+  .envelope{
+    position:relative;
+    width:min(320px, 78vw);
+    aspect-ratio: 3 / 2;
+    cursor:pointer;
+    filter:drop-shadow(0 20px 40px rgba(0,0,0,0.45));
+  }
+  .env-body{
+    position:absolute; inset:0;
+    background: linear-gradient(180deg, var(--bg-softer), var(--bg-soft));
+    border:1px solid var(--line);
+    border-radius:6px;
+  }
+  .env-flap{
+    position:absolute; top:0; left:0; right:0;
+    height:52%;
+    background: linear-gradient(160deg, var(--bg-soft), #2f1d2c);
+    clip-path: polygon(0 0, 100% 0, 50% 100%);
+    border-radius:6px 6px 0 0;
+    transform-origin: top;
+    transition: transform 0.9s cubic-bezier(.6,.1,.25,1);
+    z-index:3;
+  }
+  .envelope.open .env-flap{ transform: rotateX(180deg); }
+  .env-shadow-line{
+    position:absolute; inset:0;
+    clip-path: polygon(0 100%, 50% 42%, 100% 100%);
+    background: linear-gradient(0deg, rgba(0,0,0,0.28), transparent);
+    border-radius:0 0 6px 6px;
+    z-index:2;
+  }
+  .seal{
+    position:absolute; top:44%; left:50%;
+    width:46px; height:46px;
+    background: radial-gradient(circle at 35% 30%, #e6c27f, var(--gold) 70%);
+    border-radius:50%;
+    transform:translate(-50%,-50%);
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Playfair Display', serif;
+    color:var(--bg-deep);
+    font-size:1.1rem;
+    z-index:4;
+    box-shadow:0 4px 10px rgba(0,0,0,0.4);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+  }
+  .envelope.open .seal{ opacity:0; transform:translate(-50%,-50%) scale(0.4); }
+  .env-hint{
+    position:absolute; bottom:-2.4rem; left:50%; transform:translateX(-50%);
+    font-size:0.75rem; letter-spacing:0.15em; color:var(--mauve);
+    text-transform:uppercase;
+    white-space:nowrap;
+  }
+
+  .scroll-cue{
+    margin-top:3rem;
+    font-size:0.7rem;
+    letter-spacing:0.2em;
+    color:var(--mauve);
+    text-transform:uppercase;
+    opacity:0;
+    transition:opacity 0.8s ease 0.6s;
+  }
+  .envelope.open ~ .scroll-cue{ opacity:0.8; }
+
+  /* ---------- LETTER ---------- */
+  #letter{
+    max-width:640px;
+  }
+  #letter .eyebrow{ opacity:0; }
+  #letter h2{ font-size:clamp(1.6rem, 3.4vw, 2.2rem); color:var(--blush-soft); font-style:italic; opacity:0; }
+  #letter p{ font-family:'Cormorant Garamond', serif; font-size:1.35rem; line-height:1.85; color:var(--cream); opacity:0; }
+  #letter .sign{ font-family:'Caveat', cursive; font-size:2.1rem; color:var(--gold); margin-top:1rem; opacity:0; }
+
+  .reveal{ transform:translateY(18px); }
+  .reveal.show{ animation: riseIn 0.9s ease forwards; }
+  @keyframes riseIn{ to{ opacity:1; transform:translateY(0);} }
+
+  /* ---------- REASONS ---------- */
+  #reasons{ gap:2.6rem; }
+  .reason-list{
+    display:flex; flex-direction:column; gap:1.6rem;
+    max-width:560px; width:100%;
+  }
+  .reason-item{
+    display:flex; gap:1.1rem; align-items:flex-start;
+    text-align:left;
+    border-bottom:1px solid var(--line);
+    padding-bottom:1.4rem;
+    opacity:0; transform:translateY(14px);
+    transition:opacity 0.7s ease, transform 0.7s ease;
+  }
+  .reason-item.show{ opacity:1; transform:translateY(0); }
+  .reason-mark{
+    font-family:'Playfair Display', serif;
+    font-style:italic;
+    color:var(--gold);
+    font-size:1.4rem;
+    min-width:2ch;
+  }
+  .reason-item p{ margin:0; font-family:'Cormorant Garamond', serif; font-size:1.25rem; color:var(--cream); line-height:1.6; }
+
+  /* ---------- QUALITIES ---------- */
+  #qualities{ gap:2.4rem; }
+  .quality-grid{
+    display:grid; grid-template-columns:repeat(2, minmax(140px,1fr));
+    gap:1rem 1.6rem;
+    max-width:560px; width:100%;
+  }
+  .quality{
+    padding:1.4rem 1rem;
+    border:1px solid var(--line);
+    border-radius:14px;
+    background:rgba(248,236,228,0.03);
+    font-size:0.95rem;
+    color:var(--blush-soft);
+    opacity:0; transform:scale(0.94);
+    transition:opacity 0.6s ease, transform 0.6s ease;
+  }
+  .quality.show{ opacity:1; transform:scale(1); }
+  .quality span{ display:block; font-family:'Caveat', cursive; font-size:1.5rem; color:var(--gold); margin-bottom:0.3rem; }
+
+  /* ---------- FINAL ---------- */
+  #final{ gap:2rem; }
+  #final h2{ font-size:clamp(1.7rem,3.6vw,2.4rem); color:var(--blush-soft); }
+  #final p{ color:var(--mauve); max-width:420px; line-height:1.7; }
+  .buttons{
+    position:relative;
+    display:flex; gap:1.4rem; flex-wrap:wrap; justify-content:center;
+    margin-top:1rem;
+    min-height:70px;
+  }
+  button{
+    font-family:'Poppins', sans-serif;
+    font-size:0.95rem;
+    padding:0.9rem 2rem;
+    border-radius:999px;
+    border:none;
+    cursor:pointer;
+    transition: transform 0.25s ease;
+  }
+  #yesBtn{
+    background: linear-gradient(135deg, var(--blush), var(--gold));
+    color:var(--bg-deep);
+    font-weight:500;
+    box-shadow:0 8px 20px rgba(217,178,106,0.35);
+  }
+  #yesBtn:hover{ transform:scale(1.05); }
+  #noBtn{
+    background:transparent;
+    border:1px solid var(--line);
+    color:var(--mauve);
+    position:relative;
+    transition: transform 0.18s ease-out;
+  }
+
+  #finalMessage{
+    font-family:'Playfair Display', serif;
+    font-style:italic;
+    font-size:1.4rem;
+    color:var(--gold);
+    opacity:0;
+    transition:opacity 0.8s ease;
+  }
+  #finalMessage.show{ opacity:1; }
+
+  .heart-burst{
+    position:fixed; z-index:5; pointer-events:none;
+    font-size:1.2rem;
+    animation: burstUp 1.8s ease-out forwards;
+  }
+  @keyframes burstUp{
+    0%{ transform:translateY(0) scale(0.6); opacity:1; }
+    100%{ transform:translateY(-70vh) scale(1.1); opacity:0; }
+  }
+
+  footer{
+    position:relative; z-index:2;
+    text-align:center;
+    padding:2.4rem 1rem 3rem;
+    font-size:0.75rem;
+    letter-spacing:0.1em;
+    color:var(--mauve);
+    text-transform:uppercase;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation:none !important; transition:none !important; }
+  }
+
+  /* ---------- START OVERLAY (wajib disentuh dulu, biar musik pasti nyala) ---------- */
+  #startOverlay{
+    position:fixed; inset:0; z-index:100;
+    display:flex; align-items:center; justify-content:center;
+    background: radial-gradient(ellipse at center, var(--bg-softer), var(--bg-deep) 75%);
+    cursor:pointer;
+    transition: opacity 0.7s ease, visibility 0.7s ease;
+    padding:6vw;
+  }
+  #startOverlay.hidden{
+    opacity:0; visibility:hidden; pointer-events:none;
+  }
+  .overlay-inner{
+    text-align:center;
+    display:flex; flex-direction:column; align-items:center;
+    gap:0.5rem;
+  }
+  .overlay-heart{
+    font-size:2.4rem;
+    color:var(--blush);
+    margin-bottom:0.6rem;
+    animation: beat 1.8s ease-in-out infinite;
+  }
+  @keyframes beat{
+    0%,100%{ transform:scale(1); }
+    50%{ transform:scale(1.12); }
+  }
+  .overlay-eyebrow{
+    text-transform:uppercase; letter-spacing:0.35em;
+    font-size:0.65rem; color:var(--mauve); margin:0;
+  }
+  .overlay-inner h2{
+    font-size:clamp(1.6rem, 6vw, 2.2rem);
+    color:var(--blush-soft);
+    margin:0.2em 0;
+  }
+  .overlay-hint{
+    font-size:0.8rem; letter-spacing:0.15em;
+    color:var(--gold); text-transform:uppercase;
+    margin:0.4rem 0 0;
+    animation: hintPulse 1.6s ease-in-out infinite;
+  }
+  @keyframes hintPulse{
+    0%,100%{ opacity:0.6; }
+    50%{ opacity:1; }
+  }
+
+  #musicToggle{
+    position:fixed;
+    top:1.2rem; right:1.2rem;
+    z-index:10;
+    width:44px; height:44px;
+    border-radius:50%;
+    border:1px solid var(--line);
+    background:rgba(58,37,54,0.7);
+    backdrop-filter:blur(6px);
+    color:var(--gold);
+    font-size:1.1rem;
+    display:flex; align-items:center; justify-content:center;
+    padding:0;
+    transition: transform 0.3s ease, background 0.3s ease;
+  }
+  #musicToggle:hover{ transform:scale(1.08); }
+  #musicToggle.playing{
+    animation: pulseNote 1.6s ease-in-out infinite;
+  }
+  @keyframes pulseNote{
+    0%,100%{ box-shadow:0 0 0 0 rgba(217,178,106,0.35); }
+    50%{ box-shadow:0 0 0 8px rgba(217,178,106,0); }
+  }
+
+  @media (max-width:480px){
+    .quality-grid{ grid-template-columns:1fr 1fr; }
+    #letter p{ font-size:1.15rem; }
+    section{ padding:8vh 6vw; }
+    #hero h1{ font-size:1.6rem; }
+    .envelope{ width:min(260px, 72vw); }
+    .buttons{ gap:1rem; }
+    button{ padding:0.85rem 1.5rem; font-size:0.88rem; }
+    #final h2{ font-size:1.45rem; }
+    .reason-item p{ font-size:1.1rem; }
+    #musicToggle{ top:0.8rem; right:0.8rem; width:40px; height:40px; }
+  }
+</style>
+</head>
+<body>
+
+<div id="startOverlay">
+  <div class="overlay-inner">
+    <div class="overlay-heart">♥</div>
+    <p class="overlay-eyebrow">Sebelum masuk</p>
+    <h2>Untuk Kamu Sayang</h2>
+    <p class="overlay-hint">Ketuk untuk membuka</p>
+  </div>
+</div>
+
+<div id="petals"></div>
+
+<!-- Background music: place a file named "lagu.mp3" in the same folder as this HTML -->
+<audio id="bgSong" preload="auto">
+  <source src="lagu.mp3" type="audio/mpeg">
+</audio>
+<button id="musicToggle" aria-label="Putar musik">♪</button>
+
+<!-- HERO / ENVELOPE -->
+<section id="hero">
+  <p class="eyebrow">Sepucuk surat, Buat Tuan Putri</p>
+  <h1>Untuk kamu,<br>yang selama ini bertahan sama aku</h1>
+  <p>Sebelum kamu tutup ini, boleh baca sebentar? Ini bukan surat biasa. Aku janji nggak akan lama.</p>
+
+  <div class="envelope" id="envelope">
+    <div class="env-shadow-line"></div>
+    <div class="env-body"></div>
+    <div class="env-flap"></div>
+    <div class="seal">M</div>
+    <div class="env-hint">Ketuk untuk buka</div>
+  </div>
+
+  <div class="scroll-cue">Gulir ke bawah ↓</div>
+</section>
+
+<!-- LETTER -->
+<section id="letter">
+  <p class="eyebrow reveal" id="l1">Isi surat</p>
+  <h2 class="reveal" id="l2">Sayang,</h2>
+  <p class="reveal">
+    Saya tahu sekarang kamu sedang lelah. Mungkin lelah dengan keadaan,
+    lelah dengan semua masalah yang datang, atau mungkin lelah karena
+    saya terlalu sering membuat hati kamu terluka. Saya tidak menyalahkan
+    kamu kalau kamu merasa seperti itu.
+  </p>
+  <p class="reveal">Tapi bolehkah saya menyampaikan satu hal?</p>
+  <p class="reveal">
+    Menurut saya, rasa lelah itu datang dan pergi. Hari ini mungkin kita
+    sama-sama lelah, tapi bukan berarti kita harus mengakhiri semua yang
+    sudah kita bangun dengan penuh perjuangan. Jangan sampai rasa lelah
+    yang hanya singgah sesaat membuat kita kehilangan seseorang yang
+    sebenarnya masih kita sayangi.
+  </p>
+  <p class="reveal">
+    Kalau memang kamu sedang lelah, jangan hadapi semuanya sendirian.
+    Bersandarlah sebentar di saya. Biarkan saya yang menemani kamu
+    melewati hari-hari yang berat. Saya tidak ingin hanya ada saat kamu
+    bahagia. Saya juga ingin tetap berada di samping kamu saat kamu
+    merasa dunia sedang tidak baik-baik saja.
+  </p>
+  <p class="reveal">
+    Saya ingin menjadi tempat kamu pulang, bukan tempat yang ingin kamu
+    tinggalkan. Saya ingin menjadi orang yang menggenggam tangan kamu
+    ketika kamu merasa tidak kuat, bukan orang yang membuat kamu berjalan
+    sendiri.
+  </p>
+  <p class="reveal">
+    Mungkin saya memang pernah menjadi alasan air mata kamu jatuh.
+    Tapi percayalah, sekarang saya hanya ingin menjadi alasan kenapa
+    kamu bisa tersenyum lagi.
+  </p>
+  <p class="reveal">
+    Saya tidak meminta hubungan kita selalu sempurna. Saya hanya ingin
+    kita sama-sama memilih untuk bertahan ketika keadaan sedang tidak
+    baik. Karena menurut saya, cinta bukan tentang siapa yang tidak
+    pernah lelah, tetapi tentang siapa yang tetap memilih tinggal
+    meskipun sedang sama-sama lelah.
+  </p>
+  <p class="reveal">
+    Kalau kamu bertanya apa yang paling saya inginkan saat ini,
+    jawabannya sederhana. Saya hanya ingin tetap berada di samping
+    kamu. Menemani kamu sampai rasa lelah itu berlalu, memeluk kamu
+    ketika kamu merasa rapuh, dan mengingatkan kamu kalau kamu tidak
+    harus menghadapi semuanya sendirian.
+  </p>
+  <p class="reveal">
+    Karena buat saya, selama masih ada kita, selalu ada harapan.
+    Dan selama kamu masih mengizinkan saya berada di sisi kamu, saya
+    akan terus memilih kamu, hari ini, besok, dan setiap hari setelahnya.
+  </p>
+  <div class="sign reveal" id="l5">— Aku, yang masih dan akan selalu sayang kamu</div>
+</section>
+
+<!-- REASONS -->
+<section id="reasons">
+  <p class="eyebrow">Yang ingin aku akui, sejujurnya</p>
+  <h2>Aku minta maaf, karena...</h2>
+  <div class="reason-list">
+    <div class="reason-item"><span class="reason-mark">i.</span><p>Aku mengulang kesalahan yang sama, padahal udah pernah janji nggak akan lagi.</p></div>
+    <div class="reason-item"><span class="reason-mark">ii.</span><p>Aku bikin kepercayaan yang udah kamu kasih selama 4 tahun ini goyah.</p></div>
+    <div class="reason-item"><span class="reason-mark">iii.</span><p>Aku belum cukup berusaha untuk berubah, padahal kamu sudah lama menunggu itu.</p></div>
+    <div class="reason-item"><span class="reason-mark">iv.</span><p>Aku bikin kamu sampai mikir buat pergi, padahal kamu nggak pernah salah apa-apa di sini.</p></div>
+  </div>
+</section>
+
+<!-- QUALITIES -->
+<section id="qualities">
+  <p class="eyebrow">Di sela semua kesalahan ini</p>
+  <h2>Hal yang aku syukuri, sepanjang 4 tahun ini</h2>
+  <div class="quality-grid">
+    <div class="quality"><span>01</span>Kesabaran kamu yang bertahan lebih lama dari yang aku pantas dapatkan</div>
+    <div class="quality"><span>02</span>Cara kamu tetap peduli, bahkan di saat aku mengecewakan kamu</div>
+    <div class="quality"><span>03</span>Semua kenangan yang udah kita bangun bareng, satu per satu</div>
+    <div class="quality"><span>04</span>Kamu yang selalu jujur, walau aku nggak selalu begitu</div>
+  </div>
+</section>
+
+<!-- FINAL -->
+<section id="final">
+  <p class="eyebrow">Setelah semua yang aku tulis</p>
+  <h2>Aku nggak minta dimaafin hari ini juga.<br>Aku cuma minta satu kesempatan untuk berubah.</h2>
+  <p>Kalau kamu masih ragu, aku ngerti. Tapi kalau kamu masih mau kasih aku ruang untuk membuktikan, cukup satu ketukan kecil ini aja.</p>
+  <div class="buttons">
+    <button id="yesBtn">Aku masih mau coba lagi 💗</button>
+    <button id="noBtn">Aku masih perlu waktu</button>
+  </div>
+  <p id="finalMessage">Makasih udah kasih aku kesempatan. Aku akan buktikan, bukan cuma di kata-kata. Aku sayang kamu. 🤍</p>
+</section>
+
+<footer>Dibuat dengan sepenuh hati, untukmu</footer>
+
+<script>
+  // Background music: mulai dari 0:45, loop balik ke 0:45
+  const bgSong = document.getElementById('bgSong');
+  const musicToggle = document.getElementById('musicToggle');
+  const SONG_START = 45; // detik
+  let songReady = true;
+
+  bgSong.volume = 0.55;
+  bgSong.addEventListener('error', () => { songReady = false; });
+
+  function seekToStart(){
+    try{ bgSong.currentTime = SONG_START; } catch(e){}
+  }
+
+  if(bgSong.readyState >= 1){ seekToStart(); }
+  else { bgSong.addEventListener('loadedmetadata', seekToStart, { once:true }); }
+
+  // Loop manual: begitu lagu berakhir, balik lagi ke 0:45
+  bgSong.addEventListener('ended', () => {
+    seekToStart();
+    bgSong.play().catch(()=>{});
+  });
+
+  function startSong(){
+    if(!songReady) return;
+    if(bgSong.currentTime < SONG_START - 0.5 || bgSong.currentTime === 0){
+      seekToStart();
+    }
+    bgSong.play().then(()=>{
+      musicToggle.classList.add('playing');
+    }).catch(()=>{
+      // Autoplay diblokir browser, coba lagi di interaksi pertama
+      const resume = () => {
+        seekToStart();
+        bgSong.play().then(()=> musicToggle.classList.add('playing')).catch(()=>{});
+        document.removeEventListener('click', resume);
+        document.removeEventListener('touchstart', resume);
+      };
+      document.addEventListener('click', resume, { once:true });
+      document.addEventListener('touchstart', resume, { once:true });
+    });
+  }
+
+  // Coba nyalakan otomatis begitu halaman dibuka (untuk browser desktop yang mengizinkan)
+  window.addEventListener('load', startSong);
+
+  // Layar "ketuk untuk membuka": sentuhan ini jadi jaminan browser HP izinkan audio nyala
+  const startOverlay = document.getElementById('startOverlay');
+  startOverlay.addEventListener('click', () => {
+    startOverlay.classList.add('hidden');
+    startSong();
+  }, { once:true });
+
+  musicToggle.addEventListener('click', () => {
+    if(!songReady){
+      musicToggle.textContent = '✕';
+      musicToggle.title = 'Taruh file lagu.mp3 di folder yang sama dengan halaman ini';
+      return;
+    }
+    if(bgSong.paused){
+      startSong();
+    } else {
+      bgSong.pause();
+      musicToggle.classList.remove('playing');
+    }
+  });
+
+  // Ambient petals
+  const petalField = document.getElementById('petals');
+  const petalChars = ['❀','✿','♡'];
+  for(let i=0;i<22;i++){
+    const p = document.createElement('div');
+    p.className='petal';
+    p.textContent = petalChars[Math.floor(Math.random()*petalChars.length)];
+    p.style.left = Math.random()*100+'vw';
+    p.style.setProperty('--drift', (Math.random()*80-40)+'px');
+    p.style.animationDuration = (10+Math.random()*12)+'s';
+    p.style.animationDelay = (Math.random()*10)+'s';
+    p.style.fontSize = (10+Math.random()*10)+'px';
+    petalField.appendChild(p);
+  }
+
+  // Envelope open
+  const envelope = document.getElementById('envelope');
+  envelope.addEventListener('click', () => {
+    envelope.classList.add('open');
+    document.querySelector('.env-hint').style.opacity = '0';
+    setTimeout(()=>{
+      document.getElementById('letter').scrollIntoView({behavior:'smooth'});
+    }, 700);
+  });
+
+  // Scroll reveal
+  const revealTargets = document.querySelectorAll('.reveal, .reason-item, .quality');
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach((e, idx)=>{
+      if(e.isIntersecting){
+        setTimeout(()=> e.target.classList.add('show'), idx*80);
+        io.unobserve(e.target);
+      }
+    });
+  }, {threshold:0.35});
+  revealTargets.forEach(el=> io.observe(el));
+
+  // Runaway "aku masih perlu waktu" button — nggak boleh sampai kena klik/tap
+  const noBtn = document.getElementById('noBtn');
+  const buttonsBox = document.querySelector('.buttons');
+
+  function dodgeNoBtn(){
+    const box = buttonsBox.getBoundingClientRect();
+    const btn = noBtn.getBoundingClientRect();
+    const maxX = Math.max(box.width - btn.width - 16, 20);
+    const maxY = Math.max(box.height - btn.height - 16, 20);
+    const x = Math.random()*maxX - maxX/2;
+    const y = Math.random()*maxY - maxY/2;
+    noBtn.style.transform = `translate(${x}px, ${y}px)`;
+  }
+
+  // Kabur begitu kursor mendekat, sebelum sempat "mendarat" di tombolnya
+  document.addEventListener('pointermove', (e) => {
+    const rect = noBtn.getBoundingClientRect();
+    const cx = rect.left + rect.width/2;
+    const cy = rect.top + rect.height/2;
+    const dist = Math.hypot(e.clientX - cx, e.clientY - cy);
+    if(dist < 90){ dodgeNoBtn(); }
+  });
+
+  // Jaga-jaga: kalau tetap ada percobaan tap/klik, batalkan dan kabur lagi
+  noBtn.addEventListener('pointerdown', (e) => { e.preventDefault(); dodgeNoBtn(); });
+  noBtn.addEventListener('touchstart', (e) => { e.preventDefault(); dodgeNoBtn(); }, { passive:false });
+  noBtn.addEventListener('click', (e) => { e.preventDefault(); dodgeNoBtn(); });
+
+  // Yes button -> hearts + message
+  const yesBtn = document.getElementById('yesBtn');
+  const finalMessage = document.getElementById('finalMessage');
+  yesBtn.addEventListener('click', ()=>{
+    finalMessage.classList.add('show');
+    for(let i=0;i<24;i++){
+      const h = document.createElement('div');
+      h.className='heart-burst';
+      h.textContent = ['💗','💕','🤍','✿'][Math.floor(Math.random()*4)];
+      h.style.left = Math.random()*100+'vw';
+      h.style.bottom = '0px';
+      h.style.animationDelay = (Math.random()*0.6)+'s';
+      document.body.appendChild(h);
+      setTimeout(()=> h.remove(), 2200);
+    }
+  });
+</script>
+
+</body>
+</html>
